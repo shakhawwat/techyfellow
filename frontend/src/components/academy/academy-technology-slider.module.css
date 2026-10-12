@@ -1,0 +1,20 @@
+.band { padding-block:20px; background:var(--academy-surface); color:var(--academy-foreground); border-block:1px solid var(--academy-line); }
+.band>div { width:min(100% - 48px,1240px); margin-inline:auto; }
+.header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:8px; }
+.header h2 { font-size:clamp(18px,2vw,22px); font-weight:600; line-height:1.4; letter-spacing:-.015em; }
+.header button { display:grid; place-items:center; width:44px; height:44px; flex:none; border:1px solid var(--academy-control); border-radius:4px; background:transparent; color:#16C2FF; cursor:pointer; }
+.header button:disabled { opacity:.5; cursor:default; }
+.header button:hover:not(:disabled) { background:rgb(22 194 255 / 7%); }
+.header button:focus-visible { outline:2px solid #16C2FF; outline-offset:3px; }
+.header svg { width:16px; height:16px; }
+.viewport { overflow:hidden; }
+.track { display:flex; width:max-content; animation:technology-loop 65s linear infinite; }
+.group { display:flex; align-items:center; gap:40px; flex:none; margin:0; padding:0 40px 0 0; list-style:none; }
+.group li { display:flex; align-items:center; justify-content:center; flex:none; width:128px; min-height:56px; color:var(--academy-muted); font-size:20px; font-weight:600; letter-spacing:-.02em; list-style:none; }
+.group li::marker { content:''; }
+.group li:hover { color:#16C2FF; }
+.band[data-paused=true] .track,.band:hover .track,.band:focus-within .track { animation-play-state:paused; }
+.note { color:var(--academy-muted); font-size:12px; line-height:1.6; margin-top:8px; }
+@keyframes technology-loop { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+@media(max-width:599px) { .band>div { width:calc(100% - 32px); } .group { gap:24px; padding-right:24px; } .group li { width:112px; font-size:18px; } }
+@media(prefers-reduced-motion:reduce) { .track { width:100%; animation:none; transform:none; } .group { flex-wrap:wrap; justify-content:center; width:100%; gap:8px 24px; padding:0; } .group li { min-height:44px; } .group[data-loop-copy] { display:none; } }

@@ -1,0 +1,52 @@
+/* Supplied images remain unchanged; mobile contains the complete artwork. */
+.hero { position:relative; isolation:isolate; overflow:hidden; background:#101216; color:#F1F2F4; border-bottom:1px solid rgb(255 255 255 / 9%); }
+.container { display:flex; flex-direction:column; min-height:clamp(600px,47vw,680px); padding-block:56px 20px; }
+.slides { display:grid; flex:1; align-items:center; }
+.slide { grid-area:1 / 1; opacity:0; visibility:hidden; pointer-events:none; transition:opacity 450ms ease,visibility 450ms; }
+.slide[data-active="true"] { opacity:1; visibility:visible; pointer-events:auto; }
+.slide .backdrop { transform:translateX(100%); transition:transform 450ms ease; }
+.slide[data-active="true"] .backdrop { transform:translateX(0); animation:banner-enter 450ms ease; }
+.slide .copy { transform:translateX(24px); transition:transform 450ms ease; }
+.slide[data-active="true"] .copy { transform:translateX(0); animation:copy-enter 450ms ease; }
+@keyframes banner-enter { from { transform:translateX(-100%); } to { transform:translateX(0); } }
+@keyframes copy-enter { from { transform:translateX(-24px); } to { transform:translateX(0); } }
+.backdrop { position:absolute; inset:0; z-index:-1; pointer-events:none; }
+.image { object-fit:cover; }
+.backdrop::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(12,14,18,.86) 0%,rgba(12,14,18,.74) 38%,rgba(12,14,18,.10) 80%),linear-gradient(0deg,rgba(12,14,18,.75),transparent 18%); }
+.copy { max-width:640px; padding-block:16px 28px; }
+.copy h1 { font-size:clamp(48px,4.5vw,64px); font-weight:600; line-height:1.06; letter-spacing:-.045em; margin-block:28px 24px; text-wrap:balance; }
+.copy p { max-width:42ch; color:#C4CAD3; font-size:18px; line-height:1.65; margin-bottom:32px; }
+.copy > a { min-height:48px; padding-inline:22px; border-radius:7px; }
+.technicalLabel { display:inline-flex; align-items:center; gap:16px; font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:11px; line-height:1.5; letter-spacing:.12em; text-transform:uppercase; color:#B6BDC8; }
+.technicalLabel span { color:#A5ADBA; padding-right:16px; border-right:1px solid #424852; }
+.controls { position:relative; z-index:1; display:flex; align-items:center; gap:16px; padding-top:12px; border-top:1px solid rgb(255 255 255 / 12%); }
+.direction { display:flex; gap:4px; margin-left:auto; }
+.direction button { width:44px; height:44px; padding:0; color:#B6BDC8; border-color:transparent; background:transparent; }
+.direction button:hover { color:#F1F2F4; background:rgb(255 255 255 / 5%); }
+.indicators { display:flex; order:-1; gap:0; }
+.indicators button { display:grid; place-items:center; width:44px; height:44px; border:0; background:transparent; cursor:pointer; }
+.indicators span { width:24px; padding-bottom:7px; border-bottom:1px solid #424852; color:#929AA7; font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:10px; line-height:1.2; transition:color 180ms ease,border-color 180ms ease; }
+.indicators button[aria-current] span { color:#F1F2F4; border-color:#F1F2F4; }
+.play { min-width:96px; color:#B6BDC8; }
+.hero :focus-visible { outline:2px solid #16C2FF; outline-offset:4px; }
+@media(max-width:767px) {
+  .container { min-height:0; padding-block:0 20px; }
+  .slide { display:grid; grid-template-rows:auto 1fr; }
+  .backdrop { position:relative; z-index:auto; width:100vw; margin-inline:calc((100% - 100vw) / 2); aspect-ratio:16 / 9; background:#101216; }
+  .image { object-fit:contain; }
+  .backdrop::after { display:none; }
+  .copy { padding-block:32px 28px; }
+  .copy h1 { font-size:clamp(32px,8vw,42px); margin-block:20px 24px; }
+  .copy p { font-size:16px; margin-bottom:28px; }
+  .controls { gap:4px; padding-top:8px; }
+  .direction { gap:0; }
+  .play { min-width:44px; padding-inline:10px; }
+  .play span { display:none; }
+}
+@media(prefers-reduced-motion:reduce) { .slide,.indicators span,.slide .backdrop,.slide .copy,.slide[data-active="true"] .backdrop,.slide[data-active="true"] .copy { transition:none; animation:none; transform:none; } }
+
+/* Join the banner to the next section without covering its controls or copy. */
+.hero { border-bottom-color:transparent; }
+.hero::after { content:""; position:absolute; inset:auto 0 0; height:100px; z-index:0; pointer-events:none; background:linear-gradient(to bottom,rgba(16,18,22,0),#101216); }
+.copy { position:relative; z-index:1; }
+@media(max-width:767px) { .hero::after { height:50px; } }

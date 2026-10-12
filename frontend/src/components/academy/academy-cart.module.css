@@ -1,0 +1,10 @@
+.rows { display:grid; gap:24px; margin-block:24px; }
+.row { display:grid; grid-template-columns:128px minmax(0,1fr); gap:24px; border:1px solid var(--academy-line); border-radius:6px; padding:20px; background:var(--academy-surface); }
+.row h2 { font-size:20px; }
+.row>div { min-width:0; }
+.thumbnail { position:relative; margin:0; width:128px; aspect-ratio:16/9; background:var(--academy-control); display:grid; place-items:center; }
+.thumbnail img { object-fit:cover; }
+.receipt { padding:20px; border:1px solid #16C2FF; margin-block:24px; }
+.receipt ul { padding-left:20px; }
+.receipt li { margin-block:10px; overflow-wrap:anywhere; }
+@media(max-width:767px) { .row { grid-template-columns:1fr; padding:16px; gap:16px; } }

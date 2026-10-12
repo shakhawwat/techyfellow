@@ -1,0 +1,25 @@
+.shell { --background:#081526; --foreground:#e8f1ff; --border:#253c56; --muted:#a9bbd1; background:var(--background); color:var(--foreground); padding:24px; border:1px solid var(--border); border-radius:8px; }
+.shell h1 {font-size:30px;line-height:1.25;margin:20px 0;}
+.shell h2 {font-size:22px;margin:16px 0;}
+.shell p {line-height:1.6;margin:12px 0;}
+.shell a {color:#16c2ff;}
+.nav,.actions {display:flex;flex-wrap:wrap;gap:12px;margin:16px 0;}
+.cards {display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;}
+.card,.record,.module {border:1px solid var(--border);padding:16px;margin:16px 0;border-radius:6px;background:#0d2037;}
+.card strong {display:block;color:#16c2ff;font-size:32px;}
+.grid {display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;}
+.shell label {display:block;font-size:14px;margin:12px 0;}
+.shell :is(input:not([type=checkbox]),textarea,select) {width:100%;min-height:44px;display:block;background:#07111f;color:var(--foreground);border:1px solid var(--border);padding:10px;border-radius:4px;}
+.shell textarea {min-height:100px;}
+.shell :is(input,textarea,select,a,button):focus-visible {outline:2px solid #16c2ff;outline-offset:3px;}
+.shell button {margin:4px 8px 4px 0;}
+.shell :global(.button-primary) {background:#16c2ff;color:#04101b;}
+.shell :global(.button-secondary),.shell :global(.button-ghost) {color:var(--foreground);border-color:var(--border);}
+.record {overflow-wrap:anywhere;}
+.error {color:#ffadb6;}
+@media(max-width:700px){.shell{padding:16px;}.grid{grid-template-columns:1fr;}.shell h1{font-size:26px;}}
+.shell fieldset {min-width:0;border:1px solid var(--border);padding:16px;}
+.grid>* {min-width:0;}
+.module {overflow-wrap:anywhere;}
+
+.video {width:100%;aspect-ratio:16/9;border:0;display:block;margin-top:12px;}

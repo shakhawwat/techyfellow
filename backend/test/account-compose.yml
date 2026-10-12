@@ -1,0 +1,98 @@
+# Synthetic test credentials only. Private ephemeral stack; never use for deployment.
+services:
+  mongodb:
+    image: mongo:8.0.17
+    command: [mongod, --replSet, rs0, --bind_ip_all]
+    tmpfs:
+      - /data/db
+    healthcheck:
+      test: [CMD, mongosh, --quiet, --eval, 'quit(db.adminCommand({ping:1}).ok === 1 ? 0 : 1)']
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  mongodb-init:
+    image: mongo:8.0.17
+    entrypoint: [mongosh, --quiet, 'mongodb://mongodb:27017/admin?directConnection=true', /scripts/mongodb-init.js]
+    volumes:
+      - ../../scripts/mongodb-init.js:/scripts/mongodb-init.js:ro
+    depends_on:
+      mongodb:
+        condition: service_healthy
+  backend:
+    build:
+      context: ..
+      target: development
+    command: [node, dist/main.js]
+    environment:
+      NODE_ENV: test
+      PORT: '4000'
+      MONGODB_URI: 'mongodb://mongodb:27017/techyfellow_test_account_step1?replicaSet=rs0'
+      AUTH_ALLOWED_ORIGINS: 'http://localhost:3000,http://localhost:8080'
+      AUTH_TRUSTED_PROXY_IPS: ''
+      EMAIL_ENABLED: 'false'
+      RESEND_API_KEY: ''
+      EMAIL_FROM: 'synthetic-sender@example.invalid'
+      ACCOUNT_VERIFICATION_KEY: '1111111111111111111111111111111111111111111111111111111111111111'
+    volumes:
+      - ../dist:/app/dist:ro
+      - .:/app/test:ro
+    depends_on:
+      mongodb-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:4000/api/v1/health/ready').then(r=>{if(r.status!==200)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  backend-admin-check:
+    build:
+      context: ..
+      target: development
+    command: [node, dist/main.js]
+    environment:
+      NODE_ENV: test
+      PORT: '4000'
+      MONGODB_URI: 'mongodb://mongodb:27017/techyfellow_test_step7?replicaSet=rs0'
+      AUTH_ALLOWED_ORIGINS: 'http://localhost:3000,http://localhost:8080'
+      AUTH_TRUSTED_PROXY_IPS: ''
+      EMAIL_ENABLED: 'false'
+      RESEND_API_KEY: ''
+      EMAIL_FROM: 'synthetic-sender@example.invalid'
+      ACCOUNT_VERIFICATION_KEY: '1111111111111111111111111111111111111111111111111111111111111111'
+    volumes:
+      - ../dist:/app/dist:ro
+      - .:/app/test:ro
+    depends_on:
+      mongodb-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:4000/api/v1/health/ready').then(r=>{if(r.status!==200)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  backend-production-check:
+    build:
+      context: ..
+      target: development
+    command: [node, dist/main.js]
+    environment:
+      NODE_ENV: production
+      PORT: '4000'
+      MONGODB_URI: 'mongodb://mongodb:27017/techyfellow_test_step7_production?replicaSet=rs0'
+      AUTH_ALLOWED_ORIGINS: 'https://frontend-host.example'
+      AUTH_TRUSTED_PROXY_IPS: ''
+      EMAIL_ENABLED: 'false'
+      RESEND_API_KEY: ''
+      EMAIL_FROM: 'synthetic-sender@example.invalid'
+      ACCOUNT_VERIFICATION_KEY: '1111111111111111111111111111111111111111111111111111111111111111'
+    volumes:
+      - ../dist:/app/dist:ro
+      - .:/app/test:ro
+    depends_on:
+      mongodb-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:4000/api/v1/health/ready').then(r=>{if(r.status!==200)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 2s
+      timeout: 5s
+      retries: 30

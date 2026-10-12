@@ -1,0 +1,48 @@
+.carousel { min-width:0; }
+.controls { display:flex; justify-content:flex-end; gap:8px; margin-bottom:8px; }
+.controls button { width:44px; height:44px; display:grid; place-items:center; border:1px solid #526172; color:var(--accent); background:rgb(17 29 44 / 70%); cursor:pointer; }
+.controls button:disabled { color:#8391a3; cursor:default; }
+.controls button:not(:disabled):hover { border-color:var(--accent); }
+.viewport { display:flex; gap:16px; overflow-x:auto; scrollbar-width:none; scroll-snap-type:x mandatory; touch-action:pan-y; cursor:grab; padding:4px; }
+.viewport::-webkit-scrollbar { display:none; }
+.viewport[data-dragging=true] { cursor:grabbing; scroll-snap-type:none; user-select:none; }
+.card { flex:0 0 calc((100% - 32px)/3); min-width:0; display:flex; flex-direction:column; scroll-snap-align:start; border:1px solid rgb(225 237 250 / 23%); background:#1a293b; box-shadow:inset 1px 1px 0 rgb(255 255 255 / 5%); transition:border-color 200ms ease; }
+.card:is(:hover,:focus-within) { border-color:var(--accent); }
+.image { position:relative; aspect-ratio:2/1; overflow:hidden; flex:none; background:#101c2b; }
+.image img { width:100%; height:100%; object-fit:cover; transition:transform 300ms ease; }
+.card:hover .image img { transform:scale(1.025); }
+.illustration { position:absolute; bottom:8px; left:8px; padding:4px 7px; background:rgb(9 17 29 / 90%); color:#ecf0f7; font-size:10px; }
+.fallback { height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:12px; color:#bac6d4; font-size:12px; }
+.fallback svg { color:var(--accent); }
+.content { padding:14px; display:flex; flex-direction:column; flex:1; min-width:0; }
+.label { font-family:var(--font-geist-mono),monospace; color:var(--accent); font-size:10px; margin-bottom:6px; }
+.content h3 { font-size:21px; line-height:1.35; font-weight:500; letter-spacing:-.02em; overflow-wrap:anywhere; }
+.level { text-transform:capitalize; font-size:12px; color:#c1ccda; margin-top:8px; }
+.summary { color:#bfc9d7; font-size:13px; line-height:1.7; margin-block:8px; }
+.price { display:flex; flex-wrap:wrap; gap:6px 12px; align-items:center; margin-block:12px; color:#f1f2f4; font-size:16px; }
+.price del { color:#aeb9c9; font-size:13px; }
+.price strong { font-weight:550; }
+.price span { color:var(--accent); font-size:11px; }
+.price small { flex-basis:100%; font-size:11px; line-height:1.6; color:#bbc5d3; }
+.action { position:relative; isolation:isolate; display:flex; justify-content:space-between; align-items:center; gap:12px; min-height:44px; margin-top:auto; padding:8px; background:transparent; border-bottom:1px solid #596674; color:var(--accent); font-size:12px; cursor:pointer; transition:color 200ms ease; }
+.action::before { content:''; position:absolute; inset:0; z-index:-1; background:var(--accent); transform:scaleX(0); transform-origin:left; transition:transform 350ms ease; pointer-events:none; }
+.action:is(:hover,:focus-visible) { color:#07111f; }
+.action:is(:hover,:focus-visible)::before { transform:scaleX(1); }
+.action svg { width:16px; height:16px; }
+.carousel :is(button,.viewport):focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+@supports(backdrop-filter:blur(1px)) { .card { background:rgb(26 41 59 / 55%); backdrop-filter:blur(14px); } }
+@media(max-width:1023px) { .card { flex-basis:calc((100% - 16px)/2); } }
+@media(max-width:767px) { .card { flex-basis:100%; background:rgb(26 41 59 / 90%); backdrop-filter:blur(6px); } .content { padding:14px; } }
+@media(prefers-reduced-motion:reduce) { .carousel *,.carousel *::before { transition:none; } .card:hover .image img { transform:none; } }
+
+.level { align-self:flex-start; display:inline-flex; width:fit-content; padding:4px 9px; border:1px solid; border-radius:4px; line-height:1.5; font-size:12px; font-weight:500; }
+.level[data-tone=beginner] { color:#a9ebc4; background:#1e3a32; border-color:#47685a; }
+.level[data-tone=intermediate] { color:#f4d394; background:#3b3221; border-color:#716044; }
+.level[data-tone=expert] { color:#ddc6ff; background:#342740; border-color:#6b547f; }
+.level[data-tone=neutral] { color:#d2dbe7; background:#283647; border-color:#596779; }
+.price strong { color:var(--accent); font-size:23px; font-weight:600; line-height:1.4; }
+.price span { padding:3px 6px; background:rgb(22 194 255 / 10%); border:1px solid rgb(22 194 255 / 30%); border-radius:4px; }
+
+/* Card-only spacing; shared popup price sizing stays unchanged. */
+.content .price { margin-block:8px; }
+@media(max-width:767px) { .image { aspect-ratio:16/9; } }

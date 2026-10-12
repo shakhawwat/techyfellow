@@ -1,0 +1,5 @@
+.page .scopeColumns { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:28px 48px; margin-top:28px; }
+.scopeColumns > section { min-width:0; }
+.scopeColumns p { margin-top:16px; color:#BDC5D0; font-size:14px; line-height:1.8; }
+.demoNotice { margin-top:16px; padding-left:14px; border-left:2px solid #16C2FF; color:#D8E2EB; font-size:14px; line-height:1.8; }
+@media(max-width:767px) { .page .scopeColumns { grid-template-columns:1fr; gap:24px; } }

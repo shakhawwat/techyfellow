@@ -1,0 +1,87 @@
+services:
+  frontend:
+    build:
+      target: development
+    environment:
+      NODE_ENV: development
+      WATCHPACK_POLLING: "true"
+    volumes:
+      - ./frontend/src:/app/src:ro
+      - ./frontend/public:/app/public:ro
+      - ./frontend/next.config.ts:/app/next.config.ts:ro
+      - ./frontend/postcss.config.mjs:/app/postcss.config.mjs:ro
+      - ./frontend/tsconfig.json:/app/tsconfig.json:ro
+    restart: "no"
+    healthcheck:
+      start_period: 120s
+  backend:
+    depends_on:
+      mongodb-init:
+        condition: service_completed_successfully
+    build:
+      target: development
+    environment:
+      NODE_ENV: development
+      MONGODB_URI: mongodb://mongodb:27017/techyfellow?replicaSet=rs0
+      AUTH_ALLOWED_ORIGINS: ${AUTH_ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:8080}
+      TSC_WATCHFILE: FixedPollingInterval
+      TSC_WATCHDIRECTORY: RecursiveDirectoryUsingDynamicPriorityPolling
+    volumes:
+      - ./backend/src:/app/src:ro
+      - ./backend/tsconfig.json:/app/tsconfig.json:ro
+      - ./backend/tsconfig.build.json:/app/tsconfig.build.json:ro
+      - ./backend/nest-cli.json:/app/nest-cli.json:ro
+    restart: "no"
+    healthcheck:
+      start_period: 120s
+  notification-worker:
+    depends_on:
+      mongodb-init:
+        condition: service_completed_successfully
+    build:
+      target: development
+    command: ["npm", "run", "worker:email:dev"]
+    environment:
+      NODE_ENV: development
+      MONGODB_URI: mongodb://mongodb:27017/techyfellow?replicaSet=rs0
+      AUTH_ALLOWED_ORIGINS: ${AUTH_ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:8080}
+      TSC_WATCHFILE: FixedPollingInterval
+      TSC_WATCHDIRECTORY: RecursiveDirectoryUsingDynamicPriorityPolling
+    volumes:
+      - ./backend/src:/app/src:ro
+      - ./backend/tsconfig.json:/app/tsconfig.json:ro
+      - ./backend/tsconfig.build.json:/app/tsconfig.build.json:ro
+      - ./backend/nest-cli.json:/app/nest-cli.json:ro
+    restart: "no"
+    healthcheck:
+      start_period: 120s
+  nginx:
+    restart: "no"
+
+  mongodb:
+    image: mongo:8.0.17
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    volumes:
+      - mongodb-data:/data/db
+    expose:
+      - "27017"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--host", "127.0.0.1", "--eval", "quit(db.adminCommand({ping:1}).ok === 1 ? 0 : 1)"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  mongodb-init:
+    image: mongo:8.0.17
+    entrypoint: ["mongosh", "--quiet", "mongodb://mongodb:27017/admin?directConnection=true", "/scripts/mongodb-init.js"]
+    volumes:
+      - ./scripts/mongodb-init.js:/scripts/mongodb-init.js:ro
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    restart: "no"
+
+volumes:
+  mongodb-data:

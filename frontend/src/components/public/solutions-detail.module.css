@@ -1,0 +1,44 @@
+.page :where(h2) { font-size:26px; line-height:1.3; font-weight:550; letter-spacing:-.025em; }
+.page h3 { font-weight:550; line-height:1.5; }
+.page p, .page li { overflow-wrap:break-word; }
+.hero h1 span { display:inline; }
+.heroActions { display:flex; flex-wrap:wrap; align-items:center; gap:20px; margin-top:20px; }
+.heroActions > span { font-size:12px; color:#AEB8C6; }
+.context, .projects, .comparison, .process, .related { padding-block:28px; }
+.columns { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:48px; }
+.columns > section { min-width:0; }
+.columns h2 { display:flex; gap:12px; align-items:center; }
+.columns h2 svg { width:20px; height:20px; color:#16C2FF; }
+.rows, .checklist { list-style:none; padding:0; margin-top:16px; }
+.rows li, .checklist li { padding-block:12px; border-bottom:1px solid #293746; color:#BDC5D0; font-size:14px; line-height:1.8; }
+.rows li:first-child, .checklist li:first-child { border-top:1px solid #293746; }
+.explanation { color:#BDC5D0; font-size:14px; line-height:1.8; margin-top:12px; max-width:85ch; }
+.projects > div > div { margin-top:20px; }
+.checklist li { display:flex; align-items:flex-start; gap:12px; }
+.checklist svg { width:16px; height:16px; margin-top:5px; color:#74C8DF; flex-shrink:0; }
+.timeline { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); list-style:none; padding:0; margin-top:24px; gap:24px; }
+.timeline li { position:relative; min-width:0; }
+.timeline li:not(:last-child)::after { content:''; position:absolute; top:13px; left:36px; right:-24px; height:1px; background:#334151; }
+.stepNumber { position:relative; z-index:1; display:inline-block; width:26px; color:#16C2FF; font-family:var(--font-geist-mono),monospace; font-size:12px; line-height:26px; }
+.timeline h3 { margin-top:10px; font-size:15px; }
+.timeline p { margin-top:8px; color:#BDC5D0; font-size:13px; line-height:1.8; }
+.navHeading { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; }
+.navHeading a { margin-top:0; }
+.pills { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+.pills a { display:inline-flex; align-items:center; min-height:44px; padding:8px 14px; border:1px solid #344151; border-radius:24px; color:#BDC5D0; font-size:13px; }
+.pills a:hover, .pills a[aria-current=page] { color:#16C2FF; border-color:#16C2FF80; }
+.institutional { display:flex; justify-content:space-between; align-items:center; gap:24px; margin-top:28px; padding-block:24px; border-block:1px solid #334151; }
+.institutional h2 { font-size:22px; font-weight:550; line-height:1.35; }
+.institutional p { color:#BDC5D0; font-size:14px; margin-top:10px; max-width:68ch; }
+.institutional a { margin-top:0; flex-shrink:0; font-size:13px; }
+@media(max-width:1100px) { .columns { gap:32px; } .institutional { align-items:flex-start; flex-direction:column; gap:12px; } }
+@media(max-width:767px) {
+  .page :where(h2) { font-size:24px; }
+  .context, .projects, .comparison, .process, .related { padding-block:24px; }
+  .columns { grid-template-columns:1fr; gap:28px; }
+  .timeline { grid-template-columns:1fr; gap:20px; }
+  .timeline li { padding-left:44px; } .stepNumber { position:absolute; top:0; left:0; }
+  .timeline li:not(:last-child)::after { top:32px; bottom:-12px; left:12px; right:auto; width:1px; height:auto; }
+  .timeline h3 { margin-top:0; } .timeline p { margin-top:6px; }
+  .institutional a { flex-shrink:1; }
+}

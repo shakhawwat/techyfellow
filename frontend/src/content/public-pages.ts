@@ -1,0 +1,21 @@
+export const publicPages = {
+  projects: { title: 'Projects', eyebrow: 'Engineering', description: 'Published engineering work: the problem, approach, technologies and documented results.', empty: 'No published projects match this selection.', filters: { category: 'Category', technology: 'Technology' } },
+  research: { title: 'Research', eyebrow: 'Research engineering', description: 'Published research projects, methods and contributors. Research stage describes the work itself, independently of editorial publication.', empty: 'No published research matches this selection.', filters: { domain: 'Domain', researchStage: 'Research stage' } },
+  publications: { title: 'Publications', eyebrow: 'Research library', description: 'Published writing and research references, with author, venue and publication details.', empty: 'No publications match this selection.', filters: { author: 'Author', venue: 'Venue', year: 'Year' } },
+  courses: { title: 'Courses', eyebrow: 'Academy', description: 'Published course information: level, prerequisites, syllabus, duration and delivery mode.', empty: 'No published courses match this selection.', filters: { level: 'Level', deliveryMode: 'Delivery mode' } },
+  team: { title: 'Team', eyebrow: 'Company', description: 'Approved published biographies, expertise and profile links.', empty: 'No approved published profiles match this selection.', filters: { expertise: 'Expertise' } },
+} as const;
+export const pageCopy = { unavailable: 'Content is temporarily unavailable. Please try again later. This does not mean the requested record is missing.', loading: 'Loading published content…', inquiry: 'Build With Us', emptyResults: 'No results have been documented in this published record.', noMethods: 'Methods are not listed in this published record.', noContributors: 'Contributors are not listed in this published record.', missingTitle: 'Published content not found', missing: 'This record is not available as published content.' };
+
+export const learningProfileCopy = {
+  academy: { title: 'Academy', eyebrow: 'Learn With Us', description: 'Technical learning and mentorship, connected to engineering and research.', courseTitle: 'Published courses', courseEmpty: 'Courses will appear here when programs are confirmed and published.', courseUnavailable: 'Courses are temporarily unavailable. Please try again later.', courseLink: 'Explore published courses', mentoringTitle: 'Technical mentorship', mentoringText: 'Explore proposed capstone mentorship scopes. Students retain responsibility for assessed work.', mentoringLink: 'Explore capstone mentorship' },
+  about: { title: 'About Techy Fellow', eyebrow: 'Engineering & research', description: 'Engineering Intelligence Into the Physical World.', positioning: 'Engineering and research at the core, with Academy and consulting alongside.', introduction: 'Engineering, research, learning and technical consulting. One connected approach to the physical world.', sections: [
+    { title: 'Engineering', text: 'Explore proposed robotics, IoT, AI, automation and prototyping scopes.', href: '/solutions', link: 'Explore solutions' },
+    { title: 'Research', text: 'Review published research domains, methods and publications.', href: '/research', link: 'Explore research' },
+    { title: 'Academy', text: 'Review published course information and proposed mentorship scopes.', href: '/academy', link: 'Explore Academy' },
+    { title: 'Consulting', text: 'Explore proposed project, research and startup discussions.', href: '/consulting', link: 'Explore consulting' },
+  ], peopleTitle: 'People and public work', peopleText: 'Published profiles and project records provide the available public detail.', teamLink: 'Explore team profiles', projectsLink: 'Explore projects' },
+  courseAvailability: 'Course information is published for review. Enrollment, payments and certification are not implemented on this website. No scheduled cohort is offered here.',
+  prerequisitesEmpty: 'Prerequisites are not listed in this published record.', syllabusEmpty: 'A syllabus is not listed in this published record.', expertiseEmpty: 'Expertise is not listed in this published profile.',
+  inquiry: 'Send an inquiry', inquiryAvailability: 'Submit an inquiry for review. Email notifications are not enabled; availability requires separate confirmation.',
+} as const;

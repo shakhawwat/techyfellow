@@ -1,0 +1,93 @@
+import { CourseList } from './course-list';
+import { inquiryHref } from '@/lib/inquiry/schema';
+import { InquiryForm } from './inquiry-form';
+import Link from 'next/link';
+import Image from 'next/image';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
+import { Section } from '@/components/ui/section';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { TextField, SelectField } from '@/components/ui/form-field';
+import { publicPages, pageCopy, learningProfileCopy as learningCopy } from '@/content/public-pages';
+import { approvedImage, canonicalUrl, doiUrl, filters, listHref, parseListQuery, researchStages, courseLevels, deliveryModes, pagePath, type PageKind, type PublicRecord, type Search, type ListQuery } from '@/lib/public/pages';
+import { contentDetail, contentList, publicOrigin } from '@/lib/public/server-pages';
+
+function Breadcrumbs({ kind, title }: { kind: PageKind; title?: string }) {
+  return <nav className="content-breadcrumbs" aria-label="Breadcrumb"><ol><li><Link href="/">Home</Link></li>{kind === 'courses' && <li><Link href="/academy">Academy</Link></li>}<li>{title ? <Link prefetch={false} href={pagePath(kind)}>{publicPages[kind].title}</Link> : <span aria-current="page">{publicPages[kind].title}</span>}</li>{title && <li><span aria-current="page">{title}</span></li>}</ol></nav>;
+}
+function ContentHeader({ kind, title, summary, children }: { kind: PageKind; title: string; summary?: string; children?: React.ReactNode }) {
+  return <Section tone="dark" className="content-hero"><Breadcrumbs kind={kind} title={title === publicPages[kind].title ? undefined : title}/><span className="eyebrow">{publicPages[kind].eyebrow}</span><h1>{title}</h1>{summary && <p className="content-lead">{summary}</p>}{children}</Section>;
+}
+export function Unavailable({ kind, slug, query }: { kind: PageKind; slug?: string; query?: ListQuery }) {
+  return <div className="public-availability" role="status"><p>{pageCopy.unavailable}</p><a className="public-inline-link" href={query ? listHref(kind, query) : `${pagePath(kind)}${slug ? `/${slug}` : ''}`} >Try again<ArrowRight aria-hidden="true"/></a></div>;
+}
+export function FilterForm({ kind, query }: { kind: PageKind; query: ListQuery }) {
+  const labels = publicPages[kind].filters as Record<string, string>;
+  return <form action={pagePath(kind)} method="get" className="content-filters" aria-label={`Filter ${publicPages[kind].title.toLowerCase()}`}>
+    {filters[kind].map(key => ['researchStage', 'level', 'deliveryMode'].includes(key) ? <SelectField key={key} id={key} name={key} label={labels[key]} defaultValue={query.values[key] ?? ''}><option value="">All {labels[key].toLowerCase()} values</option>{(key === 'researchStage' ? researchStages : key === 'level' ? courseLevels : deliveryModes).map(value => <option key={value} value={value}>{value.replaceAll('-', ' ')}</option>)}</SelectField> : <TextField key={key} id={key} name={key} label={labels[key]} defaultValue={query.values[key] ?? ''} maxLength={key === 'year' ? 4 : 200} {...(key === 'year' ? { type: 'number', min: 1, max: 9999 } : {})} hint={key === 'year' ? undefined : 'Exact match; case-sensitive.'}/>)}
+    <SelectField id="sort" name="sort" label="Sort" defaultValue={query.sort}><option value="-publishedAt">Recently published</option><option value="publishedAt">First published</option><option value={kind === 'team' ? 'name' : 'title'}>{kind === 'team' ? 'Name' : 'Title'} A–Z</option><option value={kind === 'team' ? '-name' : '-title'}>{kind === 'team' ? 'Name' : 'Title'} Z–A</option>{kind === 'publications' && <><option value="-year">Year descending</option><option value="year">Year ascending</option></>}</SelectField>
+    <TextField id="limit" name="limit" label="Per page" type="number" min={1} max={100} defaultValue={query.limit}/>
+    <div className="content-filter-actions"><button type="submit" className="button button-primary">Apply filters</button><Link prefetch={false} className="button button-secondary" href={pagePath(kind)}>Reset</Link></div>
+  </form>;
+}
+export function RecordPreview({ kind, record }: { kind: PageKind; record: PublicRecord }) {
+  const image = kind === 'projects' ? record.media?.find(m => approvedImage(m.url)) : undefined;
+  const body = <>{image && <div className="public-project-image"><Image src={image.url} alt={image.altText} width={image.width} height={image.height} sizes="(max-width: 767px) 100vw, 50vw"/></div>}
+    <div className="content-record-kicker">{record.category ?? record.domain ?? (kind === 'courses' ? record.level : kind === 'team' ? 'Published profile' : [record.venue, record.year].join(' · '))}</div>
+    <h2><Link prefetch={false} href={`${pagePath(kind)}/${record.slug}`}>{record.title}<ArrowUpRight aria-hidden="true"/></Link></h2>
+    {kind === 'publications' && <p className="content-authors">{record.authors?.join(', ')}</p>}<p>{record.summary}</p>
+    {kind === 'research' && <Badge>Research stage: {record.researchStage}</Badge>}{kind === 'courses' && <><Badge>{record.deliveryMode?.replaceAll('-', ' ')}</Badge>{record.duration && <p className="content-note">Duration: {record.duration.value} {record.duration.unit}</p>}</>}{kind === 'team' && !!record.expertise?.length && <p className="content-note">{record.expertise.join(' · ')}</p>}</>;
+  return kind === 'publications' ? <li className="publication-entry">{body}</li> : <Card className="content-record" variant={kind === 'research' ? 'research' : 'default'}>{body}</Card>;
+}
+export async function ListPage({ kind, search }: { kind: PageKind; search: Search }) {
+  let query: ListQuery;
+  try { query = parseListQuery(kind, search); } catch (error) {
+    return <main id="public-main" tabIndex={-1}><ContentHeader kind={kind} title={publicPages[kind].title}/><Section><div className="content-validation" role="alert"><h2>Check your filters</h2><p>{error instanceof Error ? error.message : 'Choose supported filters.'}</p><Link className="public-inline-link" href={pagePath(kind)}>Reset filters</Link></div></Section></main>;
+  }
+  const result = await contentList(kind, query), copy = publicPages[kind];
+  return <main id="public-main" tabIndex={-1}><ContentHeader kind={kind} title={copy.title} summary={copy.description}/><Section className="content-body"><FilterForm kind={kind} query={query}/>
+    {result.state === 'unavailable' ? <Unavailable kind={kind} query={query}/> : <>
+      <p className="content-result-count">{result.pagination.total} published {result.pagination.total === 1 ? 'record' : 'records'} match this selection.</p>
+      {!result.data.length ? <p className="public-availability" role="status">{copy.empty}</p> : kind === 'publications' ? <ol className="publication-list">{result.data.map(record => <RecordPreview key={record.slug} kind={kind} record={record}/>)}</ol> : kind === 'courses' ? <CourseList key={query.params} records={result.data}/> : <div className="content-grid">{result.data.map(record => <RecordPreview key={record.slug} kind={kind} record={record}/>)}</div>}
+      <nav className="content-pagination" aria-label="Pagination"><span>{result.pagination.totalPages ? `Page ${query.page} of ${result.pagination.totalPages}` : 'No pages available'}</span><div>{query.page > 1 && <Link prefetch={false} className="button button-secondary" href={listHref(kind, query, query.page - 1)}>Previous page</Link>}{query.page < result.pagination.totalPages && <Link prefetch={false} className="button button-secondary" href={listHref(kind, query, query.page + 1)}>Next page</Link>}</div></nav>
+    </>}
+    <ContentLinks kind={kind}/></Section></main>;
+}
+function ContentLinks({ kind }: { kind: PageKind }) { return <div className="content-related">{kind === 'courses' && <Link href="/academy" className="public-inline-link">Explore Academy</Link>}{kind === 'team' && <Link href="/about" className="public-inline-link">About Techy Fellow</Link>}<Link href={inquiryHref(kind === 'courses' ? 'course-interest' : kind === 'team' ? 'contact' : kind === 'projects' ? 'engineering' : 'research')} className="button button-primary">{kind === 'courses' || kind === 'team' ? learningCopy.inquiry : pageCopy.inquiry}<ArrowUpRight aria-hidden="true"/></Link>{(['projects', 'research', 'publications'] as const).filter(k => k !== kind).map(k => <Link key={k} prefetch={false} href={`/${k}`} className="public-inline-link">Explore {publicPages[k].title.toLowerCase()}<ArrowRight aria-hidden="true"/></Link>)}</div>; }
+function TextBlock({ title, children }: { title: string; children: React.ReactNode }) { return <section className="content-text-block"><h2>{title}</h2>{children}</section>; }
+function ItemList({ items, empty }: { items: string[]; empty: string }) { return items.length ? <ul>{items.map((item, index) => <li key={index}>{item}</li>)}</ul> : <p className="content-note">{empty}</p>; }
+function JsonLd({ value }: { value: unknown }) { return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(value).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026') }}/>; }
+export async function DetailPage({ kind, slug }: { kind: PageKind; slug: string }) {
+  const result = await contentDetail(kind, slug); if (result.state === 'missing') notFound();
+  if (result.state === 'unavailable') return <main id="public-main" tabIndex={-1}><ContentHeader kind={kind} title={`${publicPages[kind].title} temporarily unavailable`}/><Section><Unavailable kind={kind} slug={slug}/><ContentLinks kind={kind}/></Section></main>;
+  const record = result.data, url = canonicalUrl(`${pagePath(kind)}/${record.slug}`, publicOrigin(), record), origin = publicOrigin();
+  const media = record.media?.filter(m => approvedImage(m.url)) ?? [];
+  return <main id="public-main" tabIndex={-1}><ContentHeader kind={kind} title={record.title} summary={record.summary}><div className="content-header-meta"><span>{record.category ?? record.domain ?? (kind === 'courses' ? record.level : kind === 'team' ? 'Published profile' : `${record.venue} · ${record.year}`)}</span>{kind === 'research' && <Badge>Research stage: {record.researchStage}</Badge>}</div></ContentHeader>
+    {url && <JsonLd value={{ '@context': 'https://schema.org', '@type': kind === 'publications' ? 'ScholarlyArticle' : kind === 'courses' ? 'Course' : kind === 'team' ? 'Person' : 'CreativeWork', name: record.title, description: kind === 'team' ? record.biography : record.summary, url, ...(kind !== 'team' ? { datePublished: record.publishedAt } : {}), ...(kind === 'publications' ? { author: record.authors?.map(name => ({ '@type': 'Person', name })), isPartOf: { '@type': 'CreativeWork', name: record.venue }, ...(doiUrl(record.doi) ? { sameAs: doiUrl(record.doi) } : {}) } : {}), ...(kind === 'team' ? { ...(record.expertise?.length ? { knowsAbout: record.expertise } : {}), ...(record.profileLinks.length ? { sameAs: record.profileLinks.map(link => link.url) } : {}) } : {}), ...(kind === 'courses' ? { educationalLevel: record.level } : {}) }}/ >}
+    {origin && url && <JsonLd value={{ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ name: 'Home', item: origin }, ...(kind === 'courses' ? [{ name: 'Academy', item: `${origin}/academy` }] : []), { name: publicPages[kind].title, item: `${origin}${pagePath(kind)}` }, { name: record.title, item: url }].map((item, index) => ({ '@type': 'ListItem', position: index + 1, ...item })) }}/ >}
+    <Section className="content-body"><div className="content-reading-layout"><article className="content-reading">
+      {kind === 'projects' && <><TextBlock title="Problem"><p>{record.problem}</p></TextBlock><TextBlock title="Approach"><p>{record.approach}</p></TextBlock><TextBlock title="Technologies"><div className="content-tags">{record.technologies.length ? record.technologies.map((technology, index) => <Badge key={index}>{technology}</Badge>) : <p className="content-note">No technologies are listed in this record.</p>}</div></TextBlock><TextBlock title="Documented results"><ItemList items={record.results} empty={pageCopy.emptyResults}/></TextBlock>
+        {!!media.length && <TextBlock title="Project gallery"><div className="content-gallery">{media.map((image, index) => <figure key={`${image.url}-${index}`}><Image src={image.url} alt={image.altText} width={image.width} height={image.height} sizes="(max-width: 767px) 100vw, 720px"/><figcaption>{image.altText}</figcaption></figure>)}</div></TextBlock>}</>}
+      {kind === 'research' && <><TextBlock title="Research domain"><p>{record.domain}</p></TextBlock><TextBlock title="Methods"><ItemList items={record.methods} empty={pageCopy.noMethods}/></TextBlock><TextBlock title="Contributors"><ItemList items={record.contributors.map(person => person.name)} empty={pageCopy.noContributors}/></TextBlock><TextBlock title="Research stage"><p>{record.researchStage}</p><p className="content-note">This describes the research lifecycle. This record is editorially published; publication does not mean the research is completed.</p></TextBlock></>}
+      {kind === 'publications' && <><TextBlock title="Publication details"><dl className="publication-details"><div><dt>Authors</dt><dd>{record.authors?.join(', ')}</dd></div><div><dt>Venue</dt><dd>{record.venue}</dd></div><div><dt>Year</dt><dd>{record.year}</dd></div>{record.doi && <div><dt>DOI</dt><dd>{record.doi}</dd></div>}</dl></TextBlock>{(doiUrl(record.doi) || record.publisherUrl) && <TextBlock title="Source links"><div className="content-source-links">{doiUrl(record.doi) && <a className="public-inline-link" href={doiUrl(record.doi)} rel="noopener noreferrer">Open DOI record<ArrowUpRight aria-hidden="true"/></a>}{record.publisherUrl && <a className="public-inline-link" href={record.publisherUrl} rel="noopener noreferrer">Open publisher page<ArrowUpRight aria-hidden="true"/></a>}</div></TextBlock>}</>}
+      {kind === 'courses' && <><TextBlock title="Course details"><dl className="publication-details"><div><dt>Level</dt><dd>{record.level}</dd></div><div><dt>Delivery mode</dt><dd>{record.deliveryMode?.replaceAll('-', ' ')}</dd></div><div><dt>Duration</dt><dd>{record.duration?.value} {record.duration?.unit}</dd></div></dl></TextBlock><TextBlock title="Prerequisites"><ItemList items={record.prerequisites} empty={learningCopy.prerequisitesEmpty}/></TextBlock><TextBlock title="Syllabus">{record.syllabus.length ? <ol className="course-syllabus">{record.syllabus.map((section, index) => <li key={index}><h3>{section.title}</h3>{!!section.topics.length && <ul>{section.topics.map((topic, topicIndex) => <li key={topicIndex}>{topic}</li>)}</ul>}</li>)}</ol> : <p className="content-note">{learningCopy.syllabusEmpty}</p>}</TextBlock><p className="public-availability">{learningCopy.courseAvailability}</p></>}
+      {kind === 'team' && <><TextBlock title="Biography"><p>{record.biography}</p></TextBlock><TextBlock title="Expertise"><ItemList items={record.expertise ?? []} empty={learningCopy.expertiseEmpty}/></TextBlock>{!!record.profileLinks.length && <TextBlock title="Approved profile links"><ul className="profile-links">{record.profileLinks.map((link, index) => <li key={index}><a className="public-inline-link" href={link.url} rel="noopener noreferrer">{link.label}<ArrowUpRight aria-hidden="true"/></a></li>)}</ul></TextBlock>}</>}
+    </article><aside className="content-sidebar" aria-label="Record navigation"><p>Published <time dateTime={record.publishedAt}>{record.publishedAt.slice(0, 10)}</time></p><Link prefetch={false} className="public-inline-link" href={pagePath(kind)}>All {publicPages[kind].title.toLowerCase()}<ArrowRight aria-hidden="true"/></Link><Link href={kind === 'courses' ? '#course-inquiry' : inquiryHref(kind === 'team' ? 'contact' : kind === 'projects' ? 'engineering' : 'research')} className="button button-primary">{kind === 'courses' || kind === 'team' ? learningCopy.inquiry : pageCopy.inquiry}</Link></aside></div><ContentLinks kind={kind}/></Section>
+  {kind === 'courses' && <Section id="course-inquiry"><h2>Discuss this course</h2><InquiryForm initialType="course-interest" source="academy" initialCourse={record.slug} courses={{ state: 'available', data: [{ slug: record.slug, title: record.title }] }}/></Section>}
+  </main>;
+}
+export async function detailMetadata(kind: PageKind, slug: string): Promise<Metadata> {
+  const result = await contentDetail(kind, slug); if (result.state === 'missing') notFound();
+  if (result.state === 'unavailable') return { title: `${publicPages[kind].title} unavailable | Techy Fellow`, robots: { index: false, follow: false } };
+  const record = result.data, canonical = canonicalUrl(`${pagePath(kind)}/${slug}`, publicOrigin(), record), title = `${record.seo?.title ?? record.title} | Techy Fellow`, description = record.seo?.description ?? record.summary;
+  return { title, description, ...(canonical ? { alternates: { canonical } } : {}), openGraph: { title, description, type: 'website', ...(canonical ? { url: canonical } : {}) } };
+}
+export async function listMetadata(kind: PageKind, search: Search): Promise<Metadata> {
+  try {
+    const query = parseListQuery(kind, search), result = await contentList(kind, query), url = canonicalUrl(listHref(kind, query), publicOrigin());
+    return { title: `${publicPages[kind].title} | Techy Fellow`, description: publicPages[kind].description, ...(result.state === 'available' && url ? { alternates: { canonical: url } } : {}), ...(result.state === 'unavailable' ? { robots: { index: false, follow: false } } : {}) };
+  } catch { return { title: `${publicPages[kind].title} filters | Techy Fellow`, robots: { index: false, follow: false } }; }
+}
+export function ContentLoading() { return <main id="public-main" tabIndex={-1} aria-busy="true"><Section><p className="public-availability" role="status">{pageCopy.loading}</p></Section></main>; }

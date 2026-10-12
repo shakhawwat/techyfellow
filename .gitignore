@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+coverage/
+.turbo/
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+
+# Real environment files; retain templates
+.env
+.env.*
+!.env.example
+
+# Local system files
+.DS_Store
+Thumbs.db
+
+# Optional local Compose overrides
+docker-compose.*.local.yml
+
+/artifacts/
+
+/artifacts/
+
+/artifacts/
+node_modules/
+.next/
+dist/
+.env
+.env.*
+!.env.example
+!.env.*.example

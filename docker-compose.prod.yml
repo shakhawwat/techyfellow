@@ -1,0 +1,26 @@
+# Local production-mode validation. Configure TLS before public deployment.
+services:
+  frontend:
+    build:
+      target: production
+    environment:
+      NODE_ENV: production
+    restart: unless-stopped
+  backend:
+    build:
+      target: production
+    environment:
+      NODE_ENV: production
+      MONGODB_URI: ${MONGODB_URI:?Supply an external MONGODB_URI for production}
+      AUTH_ALLOWED_ORIGINS: ${AUTH_ALLOWED_ORIGINS:?Supply exact HTTPS frontend origins for production}
+    restart: unless-stopped
+  notification-worker:
+    build:
+      target: production
+    environment:
+      NODE_ENV: production
+      MONGODB_URI: ${MONGODB_URI:?Supply an external MONGODB_URI for production}
+      AUTH_ALLOWED_ORIGINS: ${AUTH_ALLOWED_ORIGINS:?Supply exact HTTPS frontend origins for production}
+    restart: unless-stopped
+  nginx:
+    restart: unless-stopped

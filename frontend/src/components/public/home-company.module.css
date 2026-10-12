@@ -1,0 +1,182 @@
+.section { position:relative; isolation:isolate; padding-block:clamp(40px,5vw,68px); color:#f1f2f4; background:linear-gradient(#0f1c33,#111c2b 100px,#0b1523 calc(100% - 100px),#07111f); }
+.layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(28px,5vw,64px); align-items:start; }
+.label { font-family:var(--font-geist-mono),monospace; color:var(--accent); font-size:11px; letter-spacing:.12em; line-height:1.8; }
+.introduction h2 { font-size:clamp(34px,4vw,54px); line-height:1.15; letter-spacing:-.035em; font-weight:550; margin-block:16px; overflow-wrap:anywhere; }
+.introduction h2 span { color:var(--accent); }
+.description { font-size:15px; line-height:1.8; color:#bdc8d6; max-width:50ch; }
+.domains { display:flex; flex-wrap:wrap; gap:8px; list-style:none; padding:0; margin-block:20px; }
+.domains li { padding:5px 10px; border:1px solid rgb(22 194 255 / 25%); color:#b9c9d9; font-family:var(--font-geist-mono),monospace; font-size:11px; }
+.actions { display:flex; flex-wrap:wrap; gap:12px 20px; margin-top:24px; }
+.action { position:relative; isolation:isolate; display:inline-flex; align-items:center; gap:10px; min-height:48px; padding:8px 12px; border-bottom:1px solid #536476; color:var(--accent); font-size:12px; transition:color 200ms ease; }
+.action::before { content:''; position:absolute; inset:0; pointer-events:none; z-index:-1; background:var(--accent); transform:scaleX(0); transform-origin:left; transition:transform 350ms ease; }
+.action svg { width:16px; height:16px; flex:none; }
+.action:is(:hover,:focus-visible) { color:#07111f; }
+.action:is(:hover,:focus-visible)::before { transform:scaleX(1); }
+.previews { position:relative; min-width:0; padding:24px; border:1px solid rgb(22 194 255 / 25%); background:#1c293b; box-shadow:inset 1px 1px 0 rgb(255 255 255 / 6%),0 8px 24px rgb(0 0 0 / 12%); }
+.previews::before,.previews::after { content:''; position:absolute; pointer-events:none; width:12px; height:12px; border-color:var(--accent); opacity:.55; }
+.previews::before { top:8px; left:8px; border-top:1px solid var(--accent); border-left:1px solid var(--accent); }
+.previews::after { right:8px; bottom:8px; border-right:1px solid var(--accent); border-bottom:1px solid var(--accent); }
+.previewHeading { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.previewHeading svg { width:22px; height:22px; color:var(--accent); }
+.profile { display:flex; gap:16px; padding-block:18px; border-top:1px solid #415167; min-width:0; }
+.profileText { min-width:0; flex:1; }
+.profile h3 { font-size:20px; line-height:1.4; font-weight:500; overflow-wrap:anywhere; }
+.profile h3 a { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:44px; transition:color 200ms ease; }
+.profile h3 svg { width:16px; height:16px; color:var(--accent); flex:none; }
+.profile a:is(:hover,:focus-visible) { color:var(--accent); text-decoration:underline; text-underline-offset:4px; }
+.portrait { width:72px; height:88px; object-fit:cover; flex:none; }
+.role { color:#d4dce7; font-size:13px; line-height:1.7; margin-top:4px; }
+.expertise { color:#b5c2d3; font-size:12px; line-height:1.8; margin-top:8px; }
+.availability { display:flex; align-items:start; gap:12px; padding-block:16px 4px; border-top:1px solid #415167; color:#bdc8d6; font-size:14px; line-height:1.8; }
+.availability svg { width:20px; height:20px; color:var(--accent); flex:none; margin-top:4px; }
+.section a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+@supports(backdrop-filter:blur(1px)) { .previews { background:rgb(28 41 59 / 55%); backdrop-filter:blur(14px); } }
+@media(max-width:767px) { .layout { grid-template-columns:minmax(0,1fr); gap:28px; } .section { padding-block:36px; } .previews { padding:20px; background:rgb(28 41 59 / 90%); backdrop-filter:blur(6px); } .actions { gap:12px; } }
+@media(prefers-reduced-motion:reduce) { .section *,.section *::before { transition:none; } }
+
+.placeholder { display:grid; place-items:center; flex:none; width:56px; height:64px; border:1px solid #4b647c; background:#1c3045; color:var(--accent); }
+.placeholder svg { width:28px; height:28px; }
+.demoLabel { color:var(--accent); font-family:var(--font-geist-mono),monospace; font-size:10px; margin-top:6px; line-height:1.8; }
+.viewProfile { display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:0; margin-top:6px; color:var(--accent); background:transparent; cursor:pointer; font-size:12px; }
+.viewProfile svg { width:16px; height:16px; }
+.viewProfile:is(:hover,:focus-visible) { text-decoration:underline; text-underline-offset:4px; }
+.section :is(button,a):focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.dialog { width:min(720px,calc(100% - 32px)); max-height:85dvh; padding:0; margin:auto; overflow:hidden; background:#192535; color:#f1f2f4; border:1px solid #52667c; border-radius:12px; box-shadow:0 24px 80px rgb(0 0 0 / 45%); }
+.dialog[open] { display:flex; flex-direction:column; animation:openProfile 180ms ease-out; }
+.dialog::backdrop { background:rgb(3 8 16 / 85%); }
+.dialogHeader { display:flex; flex-direction:row-reverse; align-items:center; justify-content:space-between; flex:none; gap:16px; padding:20px 24px; border-bottom:1px solid #435164; }
+.dialogHeader h2 { font-size:24px; line-height:1.35; min-width:0; overflow-wrap:anywhere; }
+.dialogHeader button { min-width:44px; min-height:44px; flex:none; color:#f1f2f4; background:transparent; border:1px solid #526173; border-radius:4px; cursor:pointer; }
+.dialogContent { padding:24px; overflow:auto; min-height:0; overscroll-behavior:contain; overflow-wrap:anywhere; }
+.dialogContent section { margin-top:24px; }
+.dialogContent h3 { color:var(--accent); font-size:14px; margin-bottom:8px; }
+.dialogContent p,.dialogContent li { color:#cbd5e2; font-size:14px; line-height:1.8; }
+.dialogContent .demoLabel { color:var(--accent); font-size:10px; }
+.dialogContent .demoNote { font-size:12px; color:#bac5d4; margin-top:10px; }
+.dialogContent ul { padding-left:20px; list-style:disc; }
+.dialogContent li+li { margin-top:6px; }
+.dialogContent .action { margin-top:24px; }
+.dialog :is(button,a):focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.dialogContent:focus-visible { outline:2px solid var(--accent); outline-offset:-4px; }
+@supports(backdrop-filter:blur(1px)) { .dialog { background:rgb(25 37 53 / 90%); backdrop-filter:blur(20px); } }
+@media(max-width:767px) { .dialogHeader,.dialogContent { padding:16px; } .dialogHeader h2 { font-size:20px; } .profile { gap:12px; } }
+@keyframes openProfile { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+@media(prefers-reduced-motion:reduce) { .dialog[open] { animation:none; } .dialog *,.dialog *::before { transition:none; } }
+
+/* Locally scoped profile collection and filters. */
+.layout { grid-template-columns:minmax(0,1fr); gap:28px; }
+.introduction { max-width:880px; }
+.previews { padding:24px; }
+.filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+.filters button { min-height:44px; padding:8px 12px; border:1px solid #53677e; border-radius:5px; background:#18283b; color:#c9d5e3; font-size:12px; cursor:pointer; transition:background-color 200ms ease,border-color 200ms ease; }
+.filters button[aria-pressed=true] { color:#07111f; background:var(--accent); border-color:var(--accent); }
+.filters button:hover { border-color:var(--accent); }
+.resultCount { color:#b5c2d3; font-size:12px; margin-bottom:16px; }
+.profileGrid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+.profileSlot:not([hidden]) { display:flex; min-width:0; }
+.profile { padding:0; display:flex; flex-direction:column; width:100%; overflow:hidden; border:1px solid #455a72; border-radius:9px; background:#1c2b3e; transition:border-color 200ms ease; }
+.profile:is(:hover,:focus-within) { border-color:var(--accent); }
+.portraitArea { aspect-ratio:4/3; overflow:hidden; display:grid; place-items:center; background:linear-gradient(140deg,#233950,#112234); flex:none; }
+.portraitArea img { width:100%; height:100%; object-fit:cover; }
+.avatar { width:100px; height:100px; border:1px solid rgb(22 194 255 / 50%); border-radius:50%; display:grid; place-items:center; color:#93e4ff; background:#17344b; box-shadow:inset 1px 1px 0 rgb(255 255 255 / 9%); }
+.avatar span { font-family:var(--font-geist-mono),monospace; font-size:32px; }
+.noPortrait { display:flex; flex-direction:column; align-items:center; gap:12px; color:#bccbdc; font-size:12px; }
+.noPortrait svg { width:36px; height:36px; color:var(--accent); }
+.profileText { display:flex; flex:1; flex-direction:column; padding:20px; }
+.profile h3 { margin-top:8px; }
+.profile h3 a { min-height:0; }
+.profile .viewProfile { margin-top:auto; padding-top:12px; justify-content:space-between; }
+.profileDetails { display:grid; grid-template-columns:minmax(0,180px) minmax(0,1fr); gap:24px; margin-top:20px; align-items:start; }
+.profileDetails .portraitArea { border-radius:8px; }
+.dialogContent .memberName { color:#f1f2f4; font-size:21px; line-height:1.4; }
+.dialog { width:min(850px,calc(100% - 32px)); }
+@supports(backdrop-filter:blur(1px)) { .profile { background:rgb(28 43 62 / 60%); } }
+@media(max-width:1023px) { .profileGrid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:767px) { .profileGrid { grid-template-columns:minmax(0,1fr); } .profileDetails { grid-template-columns:minmax(0,1fr); gap:18px; } .profileDetails .portraitArea { max-width:240px; width:100%; } .profileText { padding:18px; } .previews { padding:16px; } }
+@media(prefers-reduced-motion:reduce) { .filters button,.profile { transition:none; } }
+
+.portraitDisclosure { color:#b5c2d3; font-size:10px; line-height:1.7; margin-top:6px; }
+.demoRating,.dialogContent .demoRating { display:flex; align-items:center; gap:6px; color:#e7d098; font-size:12px; line-height:1.8; margin-block:10px; }
+.demoRating svg { width:14px; height:14px; flex:none; }
+
+/* Company carousel cards: compact readable content in five desktop slots. */
+.previews .profileText { padding:14px; }
+.previews .profile h3 { font-size:18px; }
+.previews .portraitArea { aspect-ratio:1/1; }
+@media(max-width:767px) { .previews .profileText { padding:16px; } }
+
+/* Compact carousel previews; full profile details remain in the dialog. */
+.previews .portraitArea { aspect-ratio:1.65/1; }
+.previews .profileText { padding:10px; }
+.previews .profile h3 { margin-top:4px; }
+.previews .role { margin-top:3px; line-height:1.5; }
+.previews .expertise { margin-top:5px; line-height:1.5; }
+.previews .demoRating { margin-block:6px; }
+.previews .portraitDisclosure { margin-top:3px; line-height:1.5; }
+.previews .profile .viewProfile { padding-top:6px; }
+
+/* Uniform compact team previews, scoped outside profile dialogs. */
+.previews .portraitArea { aspect-ratio:2/1; }
+.previews .profileText { padding:8px; }
+.previews .profile h3 { font-size:17px; margin-top:3px; }
+.previews .expertise { margin-top:4px; }
+.previews .demoRating { margin-block:4px; }
+.previews .profile .viewProfile { padding-top:4px; }
+
+/* Keep the restored center focus within the compact profile footprint. */
+.previews .portraitArea { aspect-ratio:2.3/1; }
+.previews .profileText { padding:7px; }
+.previews .role { margin-top:2px; }
+.previews .expertise { margin-top:3px; }
+.previews .demoRating { margin-block:3px; }
+
+/* Open carousel wrapper; retain padding for scaled cards and focus outlines. */
+.previews { background:transparent; border-color:transparent; box-shadow:none; border-radius:0; backdrop-filter:none; }
+.previews::before,.previews::after { display:none; }
+
+/* Right-align Company introduction copy without moving its action links. */
+.introduction { width:100%; max-width:none; }
+.introduction > .label,.introduction > h2 { text-align:right; }
+.introduction > .description { margin-left:auto; text-align:right; }
+
+/* Center the team category filters within their existing row. */
+.filters { justify-content:center; }
+
+/* Center the team collection label and icon above its filters. */
+.previewHeading { justify-content:center; }
+
+/* Place the team-directory action at the right edge of the Company header. */
+.actions > a[href='/team'] { margin-left:auto; }
+
+/* Company-only image backdrop, underneath content and outside profile dialogs. */
+.section::before { content:''; position:absolute; inset:0; z-index:-1; pointer-events:none; background-image:linear-gradient(to bottom,#0f1c33 0%,rgb(15 28 51 / 90%) 100px,rgb(11 21 35 / 84%) 42%,rgb(11 21 35 / 86%) calc(100% - 100px),#07111f 100%),url('/banner/TEAM1.jpg'); background-size:100% 100%,cover; background-repeat:no-repeat; background-position:center,50% 55%; }
+@media(max-width:767px) {
+ .section::before { background-image:linear-gradient(to bottom,#0f1c33 0%,rgb(15 28 51 / 91%) 55px,rgb(11 21 35 / 87%) 42%,rgb(11 21 35 / 89%) calc(100% - 55px),#07111f 100%),url('/banner/TEAM1.jpg'); background-position:center,50% 60%; }
+}
+
+/* Tighten the Company heading-to-team spacing. */
+.layout { gap:4px; }
+.actions { margin-top:8px; }
+.previews { padding-top:4px; }
+
+/* Allow the Company description to fit on one desktop line. */
+.introduction > .description { max-width:none; }
+
+/* Allocate the compact card's existing height to a clear framed portrait. */
+.previews .profile { height:347px; flex:none; background:transparent; box-shadow:none; }
+.previews .portraitArea { aspect-ratio:auto; flex:1; min-height:140px; background:#172537; border:1px solid var(--accent); box-shadow:none; }
+.previews .portraitArea::before,.previews .portraitArea::after { content:none; }
+.previews .portraitArea img { height:100%; width:100%; object-fit:cover; filter:none; opacity:1; }
+.previews .profileText { flex:none; padding:6px 7px; background:rgb(28 43 62 / 85%); box-shadow:inset 0 1px 0 rgb(255 255 255 / 7%); }
+.previews .role { font-size:12px; line-height:1.4; }
+.previews .profile .viewProfile { min-height:44px; padding-top:0; margin-top:0; }
+@media(max-width:767px) { .previews .profile { height:340px; } }
+.previews .portraitArea img[src='/banner/PP.jpg'] { object-position:50% 22% !important; }
+.previews .portraitArea img[src='/banner/PP2.jpg'] { object-position:50% 18% !important; }
+/* Keep disclosure text compact so the larger portrait includes the whole face. */
+.previews .demoLabel,.previews .portraitDisclosure { line-height:1.3; margin-top:2px; }
+.previews .profile h3 { line-height:1.25; }
+.previews .role { line-height:1.3; }
+.previews .demoRating { line-height:1.5; }
+.previews .portraitArea img[src='/banner/PP.jpg'] { object-position:50% 38% !important; }
+.previews .portraitArea img[src='/banner/PP2.jpg'] { object-position:50% 27% !important; }

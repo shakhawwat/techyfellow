@@ -1,0 +1,50 @@
+{
+  "name": "techyfellow-backend",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "dev": "nest start --watch",
+    "build": "nest build",
+    "start": "node dist/main.js",
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "tsc --noEmit",
+    "db:indexes": "node dist/content/create-indexes.js",
+    "test:content": "node --test test/content.integration.test.mjs",
+    "auth:bootstrap": "node dist/auth/bootstrap-admin.js",
+    "test:auth": "node --test test/auth.integration.test.mjs",
+    "test:admin-content": "node --test test/admin-content.integration.test.mjs",
+    "media:reconcile": "node dist/media/reconcile.js",
+    "auth:create-sales-manager": "node dist/auth/create-sales-manager.js",
+    "test:leads": "node test/leads.integration.test.mjs",
+    "worker:email": "node dist/notifications/worker.js",
+    "worker:email:dev": "nest start --watch --entryFile notifications/worker",
+    "test:account": "node --test test/account.integration.test.mjs",
+    "test:academy": "node --test test/academy.integration.test.mjs",
+    "test:academy-commerce": "node --test test/academy-commerce.integration.test.mjs",
+    "test:academy-cart": "node --test test/academy-cart.integration.test.mjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "3.1146.0",
+    "@nestjs/common": "11.2.7",
+    "@nestjs/config": "12.0.1",
+    "@nestjs/core": "11.2.7",
+    "@nestjs/mongoose": "12.0.0",
+    "@nestjs/platform-express": "11.2.7",
+    "argon2": "0.45.1",
+    "mongoose": "9.11.0",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2",
+    "sharp": "0.35.5"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "11.0.24",
+    "@types/express": "5.0.6",
+    "@types/node": "20.19.43",
+    "eslint": "10.12.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.1"
+  }
+}

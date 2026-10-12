@@ -1,0 +1,49 @@
+/* Applied only to the /research listing hero, including invalid-filter states. */
+.hero.hero {
+  padding-block:12px 18px;
+  background:#0C1726;
+  color:#F1F2F4;
+  border-bottom:1px solid rgb(189 197 208 / 18%);
+}
+.hero.hero :global(.content-breadcrumbs) {
+  margin-bottom:10px;
+  color:#AEB8C6;
+  font-size:12px;
+  line-height:1.6;
+}
+.hero.hero h1 {
+  margin-top:4px;
+  color:#16C2FF;
+  font-size:clamp(30px,3vw,42px);
+  font-weight:650;
+  line-height:1.08;
+  letter-spacing:-.04em;
+}
+.hero.hero > div > p {
+  max-width:72ch;
+  margin-top:10px;
+  color:#BDC5D0;
+  font-size:14px;
+  line-height:1.65;
+}
+.hero.hero .titleRow {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px 16px;
+}
+.hero.hero .titleRow h1 { margin-top:0; }
+.hero.hero .titleRow > div { margin-top:0; margin-left:auto; }
+.hero.hero .titleRow a {
+  min-height:44px;
+  padding:8px 12px;
+  gap:10px;
+  font-size:13px;
+}
+@media(max-width:767px) {
+  .hero.hero { padding-block:10px 16px; }
+  .hero.hero :global(.content-breadcrumbs) { margin-bottom:8px; }
+  .hero.hero h1 { font-size:clamp(28px,8vw,34px); }
+  .hero.hero > div > p { font-size:14px; line-height:1.65; }
+}

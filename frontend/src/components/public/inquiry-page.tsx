@@ -1,0 +1,12 @@
+import Link from 'next/link';
+import { parseListQuery } from '@/lib/public/pages';
+import { Section } from '@/components/ui/section';
+import { InquiryForm } from './inquiry-form';
+import { contentList, publicOrigin } from '@/lib/public/server-pages';
+import { inquiryPrefill, type InquirySearch, type CourseChoices } from '@/lib/inquiry/schema';
+export function inquiryMetadata(engineering: boolean) { const origin = publicOrigin(), path = engineering ? '/build-with-us' : '/contact'; return { title: `${engineering ? 'Build With Us' : 'Contact'} | Techy Fellow`, description: 'Submit an inquiry for review. Availability and next steps require separate confirmation.', robots: { index: false, follow: true }, referrer: 'no-referrer' as const, ...(origin ? { alternates: { canonical: origin + path } } : {}) }; }
+export async function InquiryPage({ engineering = false, search = {} }: { engineering?: boolean; search?: InquirySearch }) {
+  let courses: CourseChoices = { state: 'available', data: [] };
+  if (!engineering) { const result = await contentList('courses', parseListQuery('courses', { limit: '100', sort: 'title' })); courses = result.state === 'unavailable' ? { state: 'unavailable', data: [] } : { state: 'available', data: result.data.map(course => ({ slug: course.slug, title: course.title })) }; }
+  return <main id="public-main" tabIndex={-1}><Section tone="dark" className="content-hero"><nav aria-label="Breadcrumb"><Link href="/">Home</Link> / {engineering ? 'Build With Us' : 'Contact'}</nav><span className="eyebrow">Start a conversation</span><h1>{engineering ? 'Build With Us.' : 'Contact Techy Fellow.'}</h1><p className="content-lead">Share the problem, context and support you want to discuss.</p></Section><Section><div className="inquiry-layout"><div><h2>Your inquiry</h2><InquiryForm key={inquiryPrefill(search, engineering)} initialType={inquiryPrefill(search, engineering)} source={engineering ? 'solutions' : 'contact'} chooseType={!engineering} courses={courses}/></div><aside><h2>What happens next</h2><p>A successful submission saves your inquiry and returns a reference. It does not confirm a booking, enrollment or delivery date.</p><p>Email notifications are not enabled. Verified direct company contact details have not been supplied.</p>{engineering && <Link href="/contact">Discuss research, training or another inquiry</Link>}</aside></div></Section></main>;
+}

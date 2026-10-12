@@ -1,0 +1,100 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-/api/v1}
+        NEXT_PUBLIC_MEDIA_HOST: ${NEXT_PUBLIC_MEDIA_HOST:-}
+      target: production
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+      NEXT_TELEMETRY_DISABLED: "1"
+      CONTENT_API_BASE_URL: ${CONTENT_API_BASE_URL:-http://backend:4000/api/v1}
+      PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-}
+    expose:
+      - "3000"
+    init: true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r=>{if(r.status!==200)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  backend:
+    build:
+      context: ./backend
+      target: production
+    environment:
+      NODE_ENV: production
+      PORT: "4000"
+      AUTH_SESSION_TTL_SECONDS: ${AUTH_SESSION_TTL_SECONDS:-28800}
+      AUTH_TRUSTED_PROXY_IPS: ${AUTH_TRUSTED_PROXY_IPS:-}
+      R2_ENDPOINT: ${R2_ENDPOINT:-}
+      R2_BUCKET: ${R2_BUCKET:-}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
+      MEDIA_PUBLIC_BASE_URL: ${MEDIA_PUBLIC_BASE_URL:-}
+      MEDIA_MAX_BYTES: ${MEDIA_MAX_BYTES:-5242880}
+      MEDIA_MAX_DIMENSION: ${MEDIA_MAX_DIMENSION:-8192}
+      MEDIA_MAX_PIXELS: ${MEDIA_MAX_PIXELS:-40000000}
+      ACCOUNT_VERIFICATION_KEY: ${ACCOUNT_VERIFICATION_KEY:-}
+      EMAIL_ENABLED: ${EMAIL_ENABLED:-false}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_FROM: ${EMAIL_FROM:-}
+      LEAD_NOTIFICATION_TO: ${LEAD_NOTIFICATION_TO:-}
+      ADMIN_BASE_URL: ${ADMIN_BASE_URL:-}
+    expose:
+      - "4000"
+    init: true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4000/api/v1/health/live').then(async r=>{if(r.status!==200||JSON.stringify(await r.json())!==JSON.stringify({status:'ok'}))process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  notification-worker:
+    build:
+      context: ./backend
+      target: production
+    command: ["npm", "run", "worker:email"]
+    environment:
+      NODE_ENV: production
+      ACCOUNT_VERIFICATION_KEY: ${ACCOUNT_VERIFICATION_KEY:-}
+      EMAIL_ENABLED: ${EMAIL_ENABLED:-false}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_FROM: ${EMAIL_FROM:-}
+      LEAD_NOTIFICATION_TO: ${LEAD_NOTIFICATION_TO:-}
+      ADMIN_BASE_URL: ${ADMIN_BASE_URL:-}
+    init: true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "const h=JSON.parse(require('node:fs').readFileSync('/tmp/techyfellow-email-worker-health.json','utf8'));if(!h.healthy||Date.now()-h.at>30000)process.exit(1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  nginx:
+    image: nginx:1.30.0-alpine
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/nginx-health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

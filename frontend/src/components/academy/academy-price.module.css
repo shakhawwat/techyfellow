@@ -1,0 +1,7 @@
+.price { display:flex; align-items:center; flex-wrap:wrap; gap:6px 10px; margin-block:10px; font-size:14px; line-height:1.5; }
+.current { font-size:20px; font-weight:700; color:#16C2FF; }
+.large .current { font-size:32px; }
+.price del { color:var(--academy-muted,var(--muted)); font-size:14px; }
+.badge { color:#16C2FF; background:rgb(22 194 255 / 10%); border-radius:3px; padding:2px 6px; font-size:12px; }
+.label { flex-basis:100%; color:var(--academy-muted,var(--muted)); font-size:12px; }
+.access { flex-basis:100%; color:#16C2FF; font-size:13px; }

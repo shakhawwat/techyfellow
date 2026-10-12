@@ -1,0 +1,28 @@
+.hero { position:relative; isolation:isolate; overflow:hidden; touch-action:pan-y; }
+.backgrounds,.slide,.overlay { position:absolute; inset:0; }
+.backgrounds { z-index:-2; pointer-events:none; }
+.slide { opacity:0; transition:opacity 900ms ease; }
+.slide[data-active=true] { opacity:1; }
+.image { object-fit:cover; object-position:var(--desktop-position); }
+.overlay { z-index:-1; pointer-events:none; background:linear-gradient(90deg,rgb(5 14 26 / 96%) 0%,rgb(5 14 26 / 88%) 48%,rgb(5 14 26 / 66%) 100%),linear-gradient(0deg,rgb(12 23 38 / 82%),transparent 60%); }
+.foreground { position:relative; }
+.bottom { display:flex; justify-content:flex-end; align-items:center; flex-wrap:wrap; gap:8px 20px; margin-top:16px; }
+.copySlides { display:grid; }
+.copy { grid-area:1/1; min-width:0; opacity:0; visibility:hidden; transform:translateY(4px); transition:opacity 250ms ease,transform 250ms ease,visibility 0s 250ms; }
+.copy[data-active=true] { opacity:1; visibility:visible; transform:none; transition-delay:0s; }
+.cta { margin-top:22px; background:rgb(12 23 38 / 75%); }
+.cta svg { pointer-events:none; }
+
+.controls,.indicators { display:flex; align-items:center; gap:2px; }
+.controls>button { display:grid; place-items:center; width:44px; height:44px; background:rgb(12 23 38 / 70%); color:#16C2FF; border:1px solid #43566D; border-radius:5px; cursor:pointer; }
+.controls>button+button { margin-left:6px; }
+.controls svg { pointer-events:none; width:16px; height:16px; }
+.indicators button { display:grid; place-items:center; width:32px; height:44px; padding:0; background:transparent; border:0; cursor:pointer; }
+.indicators span { pointer-events:none; width:6px; height:6px; border-radius:50%; background:#AEB8C6; }
+.indicators button[aria-current=true] span { background:#16C2FF; box-shadow:0 0 0 3px rgb(22 194 255 / 16%); }
+.controls button:hover:not(:disabled) { border-color:#16C2FF; background:rgb(22 194 255 / 10%); }
+.controls button:focus-visible { outline:2px solid #16C2FF; outline-offset:3px; }
+.controls button:disabled { opacity:.5; cursor:default; }
+.hero :is(input,button,a,label) { touch-action:auto; }
+@media(max-width:767px) { .image { object-position:var(--mobile-position); } .overlay { background:linear-gradient(90deg,rgb(5 14 26 / 93%),rgb(5 14 26 / 84%)),linear-gradient(0deg,rgb(12 23 38 / 80%),transparent 70%); } .bottom { gap:6px; } }
+@media(prefers-reduced-motion:reduce) { .slide,.copy { transition:none; transform:none; } }

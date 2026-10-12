@@ -1,0 +1,48 @@
+.actions { display:flex; align-items:center; gap:8px; margin-left:8px; }
+.login,.signup,.userTrigger,.userPanel button { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:0 12px; font-size:13px; color:#e7eaf0; border:1px solid transparent; border-radius:7px; background:transparent; cursor:pointer; transition:background 200ms ease,color 200ms ease,border-color 200ms ease; }
+.signup { border-color:rgb(255 255 255 / 24%); background:rgb(20 29 40 / 45%); }
+.login:hover,.signup:hover,.userTrigger:hover,.userPanel button:hover { color:var(--accent); border-color:var(--accent); background:rgb(0 183 255 / 8%); }
+.actions :focus-visible,.user :focus-visible,.login:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.loading { width:80px; min-height:44px; }
+.user { position:relative; margin-left:8px; }
+.avatar { display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:rgb(255 255 255 / 8%); color:var(--accent); font-size:11px; }
+.name { max-width:100px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.userPanel { position:absolute; right:0; top:calc(100% + 10px); min-width:180px; padding:8px; background:#171a20; border:1px solid rgb(255 255 255 / 16%); border-radius:10px; box-shadow:0 12px 30px #0006; }
+.userPanel[hidden] { display:none; }
+.userPanel button { width:100%; }
+.userPanel p { padding:8px; font-size:12px; color:#f2b6b6; }
+.mobile { margin:16px 0 0; }
+.mobile.actions > * { flex:1; }
+.mobile .userPanel { position:static; margin-top:8px; }
+.page { min-height:65vh; padding:72px 20px; background:#10151d; color:#f1f2f4; }
+.form { width:min(100%,440px); margin:auto; padding:28px; background:#18212b; border:1px solid #ffffff24; border-radius:14px; }
+.form h1 { font-size:32px; letter-spacing:-.04em; margin-bottom:12px; }
+.form p { font-size:14px; line-height:1.6; color:#bdc6d2; margin:12px 0; }
+.form label { display:grid; gap:8px; margin-top:18px; font-size:14px; }
+.form input { width:100%; min-width:0; min-height:44px; padding:10px 12px; border:1px solid #ffffff38; border-radius:7px; background:#10151d; color:#f1f2f4; }
+.submit { width:100%; min-height:44px; margin-top:24px; border:1px solid var(--accent); border-radius:7px; background:var(--accent); color:var(--accent-foreground); font-weight:600; cursor:pointer; }
+.form a { color:var(--accent); text-decoration:underline; text-underline-offset:3px; }
+.form :focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.form [role=alert] { color:#f2b6b6; }
+.form button:disabled { cursor:wait; }
+@supports(backdrop-filter:blur(12px)) { .userPanel,.form { background:rgb(24 33 43 / 88%); backdrop-filter:blur(12px); } }
+@media(max-width:480px) { .page { padding:40px 16px; } .form { padding:22px; } }
+@media(prefers-reduced-motion:reduce) { .actions *,.user * { transition:none; } }
+
+.loginCta { padding-inline:18px; font-weight:650; color:var(--accent-foreground); border-color:var(--accent); background:var(--accent); }
+.loginCta:hover { color:var(--accent-foreground); background:#43CDFF; border-color:#43CDFF; }
+
+.loginCta svg { flex-shrink:0; transition:transform 200ms ease; }
+.loginCta:hover svg,.loginCta:focus-visible svg { transform:translateX(3px); }
+@media(prefers-reduced-motion:reduce) { .loginCta svg,.loginCta:hover svg,.loginCta:focus-visible svg { transition:none; transform:none; } }
+
+/* Public login only: signup retains its existing surface. */
+.loginPage { position:relative; isolation:isolate; display:grid; align-items:center; min-height:calc(100svh - 63px); background:#10151d; }
+.loginPage::before { content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; background:linear-gradient(110deg,rgb(6 12 21 / 76%),rgb(8 14 24 / 65%)),url('/banner/loginBanner.jpg') 50% 52% / cover no-repeat; }
+.loginPage .form { position:relative; background:#17212d; border:1px solid rgb(225 237 255 / 22%); box-shadow:inset 0 1px 0 rgb(255 255 255 / 6%),0 16px 48px rgb(0 0 0 / 30%); }
+.loginPage .form input { background:#101925; color:#f1f2f4; }
+.loginPage .form input:autofill { box-shadow:inset 0 0 0 1000px #101925; -webkit-text-fill-color:#f1f2f4; caret-color:#f1f2f4; }
+@supports ((backdrop-filter:blur(16px)) or (-webkit-backdrop-filter:blur(16px))) { .loginPage .form { background:rgb(18 28 41 / 80%); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); } }
+@media(min-width:1440px) { .loginPage { min-height:calc(100svh - 75px); } }
+@media(max-width:600px) { .loginPage::before { background-position:50% 50%; } .loginPage .form { background:#17212d; } }
+@media(max-width:600px) { @supports ((backdrop-filter:blur(10px)) or (-webkit-backdrop-filter:blur(10px))) { .loginPage .form { background:rgb(18 28 41 / 90%); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); } } }
